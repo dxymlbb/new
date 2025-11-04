@@ -305,6 +305,18 @@ trait Sharing {
 		}
 	}
 
+	public function getFieldValueInResponse($field) {
+		$data = simplexml_load_string($this->response->getBody())->data[0];
+		if (count($data->element) > 0) {
+			foreach ($data as $element) {
+				return (string)$element->$field;
+			}
+
+			return false;
+		}
+		return $data->$field;
+	}
+
 	public function isFieldInResponse($field, $contentExpected) {
 		$data = simplexml_load_string($this->response->getBody())->data[0];
 		if ((string)$field == 'expiration') {
@@ -512,7 +524,7 @@ trait Sharing {
 					$value = str_replace('LOCAL', substr($this->localBaseUrl, 0, -4), $value);
 				}
 				if (!$this->isFieldInResponse($field, $value)) {
-					Assert::fail("$field" . " doesn't have value " . "$value");
+					Assert::fail("$field" . " doesn't have value " . "$value" . " but has value " . $this->getFieldValueInResponse($field));
 				}
 			}
 		}
