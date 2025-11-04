@@ -73,14 +73,13 @@ class Manager {
 	 */
 	public function addShare(ExternalShare $shareExternal, IUser|IGroup|null $userOrGroup = null): ?Mount {
 		$userOrGroup = $userOrGroup ?? $this->user;
-		$name = Filesystem::normalizePath('/' . $shareExternal->getName());
 
 		if ($shareExternal->getAccepted() !== IShare::STATUS_ACCEPTED) {
 			// To avoid conflicts with the mount point generation later,
 			// we only use a temporary mount point name here. The real
 			// mount point name will be generated when accepting the share,
 			// using the original share item name.
-			$tmpMountPointName = '{{TemporaryMountPointName#' . $name . '}}';
+			$tmpMountPointName = '{{TemporaryMountPointName#' . $shareExternal->getName() . '}}';
 			$shareExternal->setMountPoint($tmpMountPointName);
 			$shareExternal->setUserOrGroup($userOrGroup);
 
@@ -105,11 +104,11 @@ class Manager {
 		$user = $userOrGroup instanceof IUser ? $userOrGroup : $this->user;
 
 		$userFolder = $this->rootFolder->getUserFolder($user->getUID());
-		$mountPoint = $userFolder->getNonExistingName($name);
+		$mountPoint = $userFolder->getNonExistingName($shareExternal->getName());
 
 		$mountPoint = Filesystem::normalizePath('/' . $mountPoint);
 		$shareExternal->setMountPoint($mountPoint);
-		$shareExternal->setUser($user->getUID());
+		$shareExternal->setUserOrGroup($user);
 		$this->externalShareMapper->insert($shareExternal);
 
 		$options = [

@@ -113,12 +113,12 @@ class RemoteController extends OCSController {
 		$userFolder = $this->rootFolder->getUserFolder($this->userId);
 
 		try {
-			$mountPointNode = $userFolder->get($share->getMountPoint());
+			$mountPointNode = $userFolder->get($share->getMountpoint());
 		} catch (NotPermittedException|NotFoundException) {
-			return $share->toArray();
+			return $share->jsonSerialize();
 		}
 
-		$shareData = $share->toArray();
+		$shareData = $share->jsonSerialize();
 
 		$shareData['mimetype'] = $mountPointNode->getMimetype();
 		$shareData['mtime'] = $mountPointNode->getMTime();

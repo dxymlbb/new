@@ -104,7 +104,8 @@ class CloudFederationProviderFiles implements ISignedCloudFederationProvider {
 			throw new ProviderCouldNotAddShareException('Unsupported protocol for data exchange.', '', Http::STATUS_NOT_IMPLEMENTED);
 		}
 
-		[$ownerUid, $remote] = $this->addressHandler->splitUserRemote($share->getOwner());
+		[, $remote] = $this->addressHandler->splitUserRemote($share->getOwner());
+
 		// for backward compatibility make sure that the remote url stored in the
 		// database ends with a trailing slash
 		if (!str_ends_with($remote, '/')) {
@@ -114,17 +115,15 @@ class CloudFederationProviderFiles implements ISignedCloudFederationProvider {
 		$token = $share->getShareSecret();
 		$name = $share->getResourceName();
 		$owner = $share->getOwnerDisplayName() ?: $share->getOwner();
-		$sharedBy = $share->getSharedByDisplayName();
 		$shareWith = $share->getShareWith();
 		$remoteId = $share->getProviderId();
 		$sharedByFederatedId = $share->getSharedBy();
 		$ownerFederatedId = $share->getOwner();
 		$shareType = $this->mapShareTypeToNextcloud($share->getShareType());
 
-		// if no explicit information about the person who created the share was send
+		// if no explicit information about the person who created the share was sent
 		// we assume that the share comes from the owner
 		if ($sharedByFederatedId === null) {
-			$sharedBy = $owner;
 			$sharedByFederatedId = $ownerFederatedId;
 		}
 

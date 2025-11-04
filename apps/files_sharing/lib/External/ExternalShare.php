@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace OCA\Files_Sharing\External;
 
+use OC\Files\Filesystem;
 use OCA\Files_Sharing\ResponseDefinitions;
 use OCP\AppFramework\Db\Entity;
 use OCP\DB\Types;
@@ -33,7 +34,6 @@ use OCP\Share\IShare;
  * @method string getPassword()
  * @method void setPassword(string $password)
  * @method string getName()
- * @method void setName(string $name)
  * @method string getOwner()
  * @method void setOwner(string $owner)
  * @method string getUser()
@@ -46,7 +46,7 @@ use OCP\Share\IShare;
  *
  * @psalm-import-type Files_SharingRemoteShare from ResponseDefinitions
  */
-class ExternalShare extends Entity {
+class ExternalShare extends Entity implements \JsonSerializable {
 	protected string $parent = '-1';
 	protected ?int $shareType = null;
 	protected ?string $remote = null;
@@ -81,6 +81,11 @@ class ExternalShare extends Entity {
 		$this->setMountpointHash(md5($mountPoint));
 	}
 
+	public function setName(string $name): void {
+		$name = Filesystem::normalizePath('/' . $name);
+		$this->setter('name', [$name]);
+	}
+
 	public function setUserOrGroup(IUser|IGroup|null $userOrGroup): void {
 		$this->setUser($userOrGroup instanceof IGroup ? $userOrGroup->getGID() : $userOrGroup->getUID());
 	}
@@ -88,7 +93,7 @@ class ExternalShare extends Entity {
 	/**
 	 * @return Files_SharingRemoteShare
 	 */
-	public function toArray(): array {
+	public function jsonSerialize(): array {
 		$parent = $this->getParent();
 		return [
 			'id' => $this->getId(),
@@ -101,7 +106,7 @@ class ExternalShare extends Entity {
 			'owner' => $this->getOwner(),
 			'user' => $this->getUser(),
 			'mountpoint' => $this->getMountpoint(),
-			'accepted' => (bool)$this->getAccepted(),
+			'accepted' => $this->getAccepted(),
 
 			// Added later on
 			'file_id' => null,
