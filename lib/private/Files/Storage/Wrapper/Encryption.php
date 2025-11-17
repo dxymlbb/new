@@ -18,6 +18,7 @@ use OC\Files\Storage\LocalTempFileTrait;
 use OC\Memcache\ArrayCache;
 use OCP\Cache\CappedMemoryCache;
 use OCP\Encryption\Exceptions\InvalidHeaderException;
+use OCP\Encryption\IEncryptionModule;
 use OCP\Encryption\IFile;
 use OCP\Encryption\IManager;
 use OCP\Encryption\Keys\IStorage;
@@ -839,7 +840,7 @@ class Encryption extends Wrapper {
 	 * @throws ModuleDoesNotExistsException
 	 * @throws \Exception
 	 */
-	protected function getEncryptionModule(string $path): ?\OCP\Encryption\IEncryptionModule {
+	protected function getEncryptionModule(string $path): ?IEncryptionModule {
 		$encryptionModule = null;
 		$header = $this->getHeader($path);
 		$encryptionModuleId = $this->util->getEncryptionModuleId($header);
