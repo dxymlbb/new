@@ -40,7 +40,7 @@ use OCP\Share\IShare;
  * @method void setUser(string $user)
  * @method string getMountpoint()
  * @method string getMountpointHash()
- * @method void setMountPointHash(string $mountPointHash)
+ * @method void setMountpointHash(string $mountPointHash)
  * @method int getAccepted()
  * @method void setAccepted(int $accepted)
  *

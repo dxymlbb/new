@@ -80,7 +80,7 @@ class Manager {
 			// mount point name will be generated when accepting the share,
 			// using the original share item name.
 			$tmpMountPointName = '{{TemporaryMountPointName#' . $shareExternal->getName() . '}}';
-			$shareExternal->setMountPoint($tmpMountPointName);
+			$shareExternal->setMountpoint($tmpMountPointName);
 			$shareExternal->setUserOrGroup($userOrGroup);
 
 			$i = 1;
@@ -90,7 +90,7 @@ class Manager {
 					break;
 				} catch (Exception $e) {
 					if ($e->getReason() === Exception::REASON_UNIQUE_CONSTRAINT_VIOLATION) {
-						$shareExternal->setMountPoint($tmpMountPointName . '-' . $i);
+						$shareExternal->setMountpoint($tmpMountPointName . '-' . $i);
 						$i++;
 					} else {
 						throw $e;
@@ -107,7 +107,7 @@ class Manager {
 		$mountPoint = $userFolder->getNonExistingName($shareExternal->getName());
 
 		$mountPoint = Filesystem::normalizePath('/' . $mountPoint);
-		$shareExternal->setMountPoint($mountPoint);
+		$shareExternal->setMountpoint($mountPoint);
 		$shareExternal->setUserOrGroup($user);
 		$this->externalShareMapper->insert($shareExternal);
 

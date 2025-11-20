@@ -524,7 +524,7 @@ trait Sharing {
 					$value = str_replace('LOCAL', substr($this->localBaseUrl, 0, -4), $value);
 				}
 				if (!$this->isFieldInResponse($field, $value)) {
-					Assert::fail("$field" . " doesn't have value " . "$value" . " but has value " . $this->getFieldValueInResponse($field));
+					Assert::fail("$field" . " doesn't have value " . "$value");
 				}
 			}
 		}
