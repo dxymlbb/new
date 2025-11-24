@@ -567,10 +567,6 @@ export default defineComponent({
 				this.filters[existingPersonFilter].name = person.displayName
 			}
 
-			this.providers.forEach(async (provider, index) => {
-				this.providers[index].disabled = !(await this.providerIsCompatibleWithFilters(provider, ['person']))
-			})
-
 			this.debouncedFind(this.searchQuery)
 			unifiedSearchLogger.debug('Person filter applied', { person })
 		},
@@ -628,7 +624,6 @@ export default defineComponent({
 				for (let i = 0; i < this.filters.length; i++) {
 					if (this.filters[i].id === filter.id) {
 						this.filters.splice(i, 1)
-						this.enableAllProviders()
 						break
 					}
 				}
@@ -669,9 +664,6 @@ export default defineComponent({
 				this.filters.push(this.dateFilter)
 			}
 
-			this.providers.forEach(async (provider, index) => {
-				this.providers[index].disabled = !(await this.providerIsCompatibleWithFilters(provider, ['since', 'until']))
-			})
 			this.debouncedFind(this.searchQuery)
 		},
 
