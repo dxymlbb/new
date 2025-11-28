@@ -1406,7 +1406,7 @@ class Manager implements IManager {
 	 *
 	 * @throws ShareNotFound
 	 */
-	public function getShareByToken($token): IShare {
+	public function getShareByToken(string $token): IShare {
 		// tokens cannot be valid local usernames
 		if ($this->userManager->userExists($token)) {
 			throw new ShareNotFound();

@@ -66,7 +66,7 @@ class RequestHandlerController extends OCSController {
 	 * @param string|null $owner Display name of the receiver
 	 * @param string|null $sharedBy Display name of the sender
 	 * @param string|null $shareWith ID of the user that receives the share
-	 * @param int|null $remoteId ID of the remote
+	 * @param string|null $remoteId ID of the remote
 	 * @param string|null $sharedByFederatedId Federated ID of the sender
 	 * @param string|null $ownerFederatedId Federated ID of the receiver
 	 * @return Http\DataResponse<Http::STATUS_OK, list<empty>, array{}>
@@ -83,7 +83,7 @@ class RequestHandlerController extends OCSController {
 		?string $owner = null,
 		?string $sharedBy = null,
 		?string $shareWith = null,
-		?int $remoteId = null,
+		?string $remoteId = null,
 		?string $sharedByFederatedId = null,
 		?string $ownerFederatedId = null,
 	) {
@@ -132,7 +132,7 @@ class RequestHandlerController extends OCSController {
 	/**
 	 * create re-share on behalf of another user
 	 *
-	 * @param int $id ID of the share
+	 * @param string $id ID of the share
 	 * @param string|null $token Shared secret between servers
 	 * @param string|null $shareWith ID of the user that receives the share
 	 * @param int|null $remoteId ID of the remote
@@ -144,7 +144,7 @@ class RequestHandlerController extends OCSController {
 	 */
 	#[NoCSRFRequired]
 	#[PublicPage]
-	public function reShare(int $id, ?string $token = null, ?string $shareWith = null, ?int $remoteId = 0) {
+	public function reShare(string $id, ?string $token = null, ?string $shareWith = null, ?int $remoteId = 0) {
 		if ($token === null
 			|| $shareWith === null
 			|| $remoteId === null
@@ -181,7 +181,7 @@ class RequestHandlerController extends OCSController {
 	/**
 	 * accept server-to-server share
 	 *
-	 * @param int $id ID of the remote share
+	 * @param string $id ID of the remote share
 	 * @param string|null $token Shared secret between servers
 	 * @return Http\DataResponse<Http::STATUS_OK, list<empty>, array{}>
 	 * @throws OCSException
@@ -192,7 +192,7 @@ class RequestHandlerController extends OCSController {
 	 */
 	#[NoCSRFRequired]
 	#[PublicPage]
-	public function acceptShare(int $id, ?string $token = null) {
+	public function acceptShare(string $id, ?string $token = null) {
 		$notification = [
 			'sharedSecret' => $token,
 			'message' => 'Recipient accept the share'
@@ -216,7 +216,7 @@ class RequestHandlerController extends OCSController {
 	/**
 	 * decline server-to-server share
 	 *
-	 * @param int $id ID of the remote share
+	 * @param string $id ID of the remote share
 	 * @param string|null $token Shared secret between servers
 	 * @return Http\DataResponse<Http::STATUS_OK, list<empty>, array{}>
 	 * @throws OCSException
@@ -225,7 +225,7 @@ class RequestHandlerController extends OCSController {
 	 */
 	#[NoCSRFRequired]
 	#[PublicPage]
-	public function declineShare(int $id, ?string $token = null) {
+	public function declineShare(string $id, ?string $token = null) {
 		$notification = [
 			'sharedSecret' => $token,
 			'message' => 'Recipient declined the share'
@@ -249,7 +249,7 @@ class RequestHandlerController extends OCSController {
 	/**
 	 * remove server-to-server share if it was unshared by the owner
 	 *
-	 * @param int $id ID of the share
+	 * @param string $id ID of the share
 	 * @param string|null $token Shared secret between servers
 	 * @return Http\DataResponse<Http::STATUS_OK, list<empty>, array{}>
 	 * @throws OCSException
@@ -258,7 +258,7 @@ class RequestHandlerController extends OCSController {
 	 */
 	#[NoCSRFRequired]
 	#[PublicPage]
-	public function unshare(int $id, ?string $token = null) {
+	public function unshare(string $id, ?string $token = null) {
 		if (!$this->isS2SEnabled()) {
 			throw new OCSException('Server does not support federated cloud sharing', 503);
 		}
@@ -285,7 +285,7 @@ class RequestHandlerController extends OCSController {
 	/**
 	 * federated share was revoked, either by the owner or the re-sharer
 	 *
-	 * @param int $id ID of the share
+	 * @param string $id ID of the share
 	 * @param string|null $token Shared secret between servers
 	 * @return Http\DataResponse<Http::STATUS_OK, list<empty>, array{}>
 	 * @throws OCSBadRequestException Revoking the share is not possible
@@ -294,7 +294,7 @@ class RequestHandlerController extends OCSController {
 	 */
 	#[NoCSRFRequired]
 	#[PublicPage]
-	public function revoke(int $id, ?string $token = null) {
+	public function revoke(string $id, ?string $token = null) {
 		try {
 			$provider = $this->cloudFederationProviderManager->getCloudFederationProvider('file');
 			$notification = ['sharedSecret' => $token];
@@ -324,9 +324,9 @@ class RequestHandlerController extends OCSController {
 	}
 
 	/**
-	 * update share information to keep federated re-shares in sync
+	 * Update share information to keep federated re-shares in sync.
 	 *
-	 * @param int $id ID of the share
+	 * @param string $id ID of the share
 	 * @param string|null $token Shared secret between servers
 	 * @param int|null $permissions New permissions
 	 * @return Http\DataResponse<Http::STATUS_OK, list<empty>, array{}>
@@ -336,7 +336,7 @@ class RequestHandlerController extends OCSController {
 	 */
 	#[NoCSRFRequired]
 	#[PublicPage]
-	public function updatePermissions(int $id, ?string $token = null, ?int $permissions = null) {
+	public function updatePermissions(string $id, ?string $token = null, ?int $permissions = null) {
 		$ncPermissions = $permissions;
 
 		try {

@@ -181,12 +181,10 @@ interface IManager {
 	/**
 	 * Get the share by token possible with password
 	 *
-	 * @param string $token
-	 * @return IShare
 	 * @throws ShareNotFound
 	 * @since 9.0.0
 	 */
-	public function getShareByToken($token);
+	public function getShareByToken(string $token): IShare;
 
 	/**
 	 * Verify the password of a public share
