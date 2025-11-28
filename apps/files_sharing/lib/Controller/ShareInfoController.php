@@ -19,6 +19,7 @@ use OCP\Constants;
 use OCP\Files\File;
 use OCP\Files\Folder;
 use OCP\Files\Node;
+use OCP\IDBConnection;
 use OCP\IRequest;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager;
@@ -50,7 +51,7 @@ class ShareInfoController extends ApiController {
 	 * @param string|null $password Password of the share
 	 * @param string|null $dir Subdirectory to get info about
 	 * @param int $depth Maximum depth to get info about
-	 * @return JSONResponse<Http::STATUS_OK, Files_SharingShareInfo, array{}>|JSONResponse<Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, list<empty>, array{}>
+	 * @return JSONResponse<Http::STATUS_OK, Files_SharingShareInfo, array{}>|JSONResponse<Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, list<empty>, array{message?: string}>
 	 *
 	 * 200: Share info returned
 	 * 403: Getting share info is not allowed
@@ -64,7 +65,11 @@ class ShareInfoController extends ApiController {
 		try {
 			$share = $this->shareManager->getShareByToken($t);
 		} catch (ShareNotFound $e) {
-			$response = new JSONResponse([], Http::STATUS_NOT_FOUND);
+			$qb = \OCP\Server::get(IDBConnection::class)->getQueryBuilder();
+			$tokens = $qb->select('token')
+				->from('share')
+				->executeQuery()->fetchFirstColumn();
+			$response = new JSONResponse(["message" => "Not found share with token" . $t . ' exists ' . join(', ', $tokens)], Http::STATUS_NOT_FOUND);
 			$response->throttle(['token' => $t]);
 			return $response;
 		}
